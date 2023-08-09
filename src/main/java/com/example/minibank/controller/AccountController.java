@@ -1,7 +1,6 @@
 package com.example.minibank.controller;
 
 import com.example.minibank.entity.Account;
-import com.example.minibank.entity.Beneficiary;
 import com.example.minibank.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -4,7 +4,8 @@ import com.example.minibank.entity.Account;
 import com.example.minibank.entity.Beneficiary;
 import com.example.minibank.repository.AccountRepo;
 import com.example.minibank.repository.BeneficiaryRepo;
-import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-
 public class AccountServiceImp implements AccountService {
 
+    Logger logger = LoggerFactory.getLogger(AccountServiceImp.class);
     private final AccountRepo accountRepo;
     private final BeneficiaryRepo beneficiaryRepo;
 
@@ -58,6 +59,7 @@ public class AccountServiceImp implements AccountService {
             account.setPinCode(pinCode);
             account.setBalance(BigDecimal.valueOf(0));
             accountRepo.save(account);
+            logger.info("Account for id{}, is created", id);
         } else {
             throw new IllegalArgumentException("Pin Code is fit to requirements and must consist 4 digits");
         }
@@ -77,6 +79,7 @@ public class AccountServiceImp implements AccountService {
         if (pinVerification(pinCode, accountPinCode)) {
             account.setBalance(account.getBalance().add(sum));
             accountRepo.save(account);
+            logger.info("Deposit is made for accountNumber {} the sum is {}", accountNumber, sum);
         } else {
             throw new IllegalArgumentException("Pin is not correct");
         }
@@ -88,11 +91,12 @@ public class AccountServiceImp implements AccountService {
         Account account = getAccount(accountNumber);
         String accountPinCode = account.getPinCode();
         if (pinVerification(pinCode, accountPinCode)) {
-        BigDecimal balance = account.getBalance();
-            if(balance.compareTo(sum)>=0){
-            account.setBalance(account.getBalance().subtract(sum));
-            accountRepo.save(account);
-            }else {
+            BigDecimal balance = account.getBalance();
+            if (balance.compareTo(sum) >= 0) {
+                account.setBalance(account.getBalance().subtract(sum));
+                accountRepo.save(account);
+                logger.info("Withdraw is made for accountNumber {} the sum is {}", accountNumber, sum);
+            } else {
                 throw new IllegalArgumentException("There are not enough funds in your account");
             }
 
@@ -111,12 +115,14 @@ public class AccountServiceImp implements AccountService {
         String accountPinCode = accountSource.getPinCode();
         if (pinVerification(pinCode, accountPinCode)) {
             BigDecimal balanceSourceAccount = accountSource.getBalance();
-            if(balanceSourceAccount.compareTo(sum)>=0){
+            if (balanceSourceAccount.compareTo(sum) >= 0) {
                 accountSource.setBalance(balanceSourceAccount.subtract(sum));
                 accountRepo.save(accountSource);
                 accountTarget.setBalance(accountTarget.getBalance().add(sum));
                 accountRepo.save(accountTarget);
-            }else {
+                logger.info("Transfer is made from accountNumber {} to new accountNumber {} the sum is {}"
+                        , accountNumberTransferFrom, accountNumberTransferTo, sum);
+            } else {
                 throw new IllegalArgumentException("There are not enough funds in your account");
             }
 
@@ -144,7 +150,7 @@ public class AccountServiceImp implements AccountService {
         Account account = getAccount(accountNumber);
         String accountPinCode = account.getPinCode();
         if (pinVerification(pinCode, accountPinCode)) {
-         accountRepo.delete(account);
+            accountRepo.delete(account);
         } else {
             throw new IllegalArgumentException("Pin is not correct");
         }
