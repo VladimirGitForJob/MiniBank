@@ -1,6 +1,7 @@
 package com.example.minibank.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
+@Builder
 @NoArgsConstructor
 @Table(name = "BENEFICIARIES")
 public class Beneficiary {
@@ -27,6 +29,13 @@ public class Beneficiary {
     private List<Account> accountList;
 
     public Beneficiary(String name, String surname, List<Account> accountList) {
+        this.name = name;
+        this.surname = surname;
+        this.accountList = accountList;
+    }
+
+    public Beneficiary(Long id, String name, String surname, List<Account> accountList) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
         this.accountList = accountList;

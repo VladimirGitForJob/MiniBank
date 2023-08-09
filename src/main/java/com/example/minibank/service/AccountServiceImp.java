@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -66,8 +67,8 @@ public class AccountServiceImp implements AccountService {
     }
 
 
-    public Account getAccount(Long accountNumber) {
-        Optional<Account> account = Optional.ofNullable(accountRepo.getAccountByAccountNumber(accountNumber));
+    public Account getAccount(Long accountNumber){
+        Optional<Account> account = accountRepo.getAccountByAccountNumber(accountNumber);
         return account.orElse(null);
     }
 

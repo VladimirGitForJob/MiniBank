@@ -1,6 +1,7 @@
 package com.example.minibank.service;
 
 import com.example.minibank.entity.Beneficiary;
+import com.example.minibank.entity.dto.BeneficiaryDTO;
 import com.example.minibank.repository.BeneficiaryRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,4 +37,9 @@ public class BeneficiaryServiceImp implements BeneficiaryService{
     public List<Beneficiary> BeneficiariesList() {
         return beneficiaryRepo.findAll();
     }
+
+ @Override
+ public List<BeneficiaryDTO> getBeneficiaryNameAndBalance() {
+  return beneficiaryRepo.getBeneficiaryNameAndBalance();
+ }
 }

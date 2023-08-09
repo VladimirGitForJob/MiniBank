@@ -2,6 +2,7 @@ package com.example.minibank.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 @Entity
 @Setter
 @Getter
+@Builder
 @NoArgsConstructor
 @Table(name = "ACCOUNTS")
 public class Account {
@@ -32,6 +34,14 @@ public class Account {
     private BigDecimal balance;
 
     public Account(String pinCode, Beneficiary beneficiary, BigDecimal balance) {
+        this.pinCode = pinCode;
+        this.beneficiary = beneficiary;
+        this.balance = balance;
+    }
+
+    public Account(Long id, Long accountNumber, String pinCode, Beneficiary beneficiary, BigDecimal balance) {
+        this.id = id;
+        this.accountNumber = accountNumber;
         this.pinCode = pinCode;
         this.beneficiary = beneficiary;
         this.balance = balance;
