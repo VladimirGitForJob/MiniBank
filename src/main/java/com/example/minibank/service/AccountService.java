@@ -20,7 +20,7 @@ public interface AccountService {
 
     BigDecimal getBalanceByAccountNumber(Long accountNumber, String pinCode);
 
-    void deleteAccountById(Long accountNumber);
+    void deleteAccountByAccountNumber(Long accountNumber,String pinCode);
 
     List<Account> getAllAccounts();
 

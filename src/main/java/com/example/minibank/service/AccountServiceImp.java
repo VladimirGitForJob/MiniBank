@@ -30,6 +30,12 @@ public class AccountServiceImp implements AccountService {
         return true;
     }
 
+    private boolean pinVerification(String incomingPinCode, String accountPinCode) {
+        if (incomingPinCode.equals(accountPinCode))
+            return true;
+        return false;
+    }
+
     private Long createAccountNumber() {
         long number = (long) Math.floor(Math.random() * 9_00_000_000L) + 1_00_000_000L;
         return number;
@@ -53,34 +59,95 @@ public class AccountServiceImp implements AccountService {
             account.setBalance(BigDecimal.valueOf(0));
             accountRepo.save(account);
         } else {
-            throw new IllegalArgumentException("Pin Code is not correct");
+            throw new IllegalArgumentException("Pin Code is fit to requirements and must consist 4 digits");
+        }
+    }
+
+
+    public Account getAccount(Long accountNumber) {
+        Optional<Account> account = Optional.ofNullable(accountRepo.getAccountByAccountNumber(accountNumber));
+        return account.orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public void depositMoney(Long accountNumber, String pinCode, BigDecimal sum) {
+        Account account = getAccount(accountNumber);
+        String accountPinCode = account.getPinCode();
+        if (pinVerification(pinCode, accountPinCode)) {
+            account.setBalance(account.getBalance().add(sum));
+            accountRepo.save(account);
+        } else {
+            throw new IllegalArgumentException("Pin is not correct");
         }
     }
 
     @Override
-    public void depositMoney(Long accountNumber, String pinCode, BigDecimal sum) {
-
-    }
-
-    @Override
+    @Transactional
     public void withdrawMoney(Long accountNumber, String pinCode, BigDecimal sum) {
+        Account account = getAccount(accountNumber);
+        String accountPinCode = account.getPinCode();
+        if (pinVerification(pinCode, accountPinCode)) {
+        BigDecimal balance = account.getBalance();
+            if(balance.compareTo(sum)>=0){
+            account.setBalance(account.getBalance().subtract(sum));
+            accountRepo.save(account);
+            }else {
+                throw new IllegalArgumentException("There are not enough funds in your account");
+            }
 
+        } else {
+            throw new IllegalArgumentException("Pin is not correct");
+        }
     }
 
+
     @Override
+    @Transactional
     public void transferMoneyToOtherAccount(Long accountNumberTransferFrom, Long accountNumberTransferTo, String pinCode
             , BigDecimal sum) {
+        Account accountSource = getAccount(accountNumberTransferFrom);
+        Account accountTarget = getAccount(accountNumberTransferTo);
+        String accountPinCode = accountSource.getPinCode();
+        if (pinVerification(pinCode, accountPinCode)) {
+            BigDecimal balanceSourceAccount = accountSource.getBalance();
+            if(balanceSourceAccount.compareTo(sum)>=0){
+                accountSource.setBalance(balanceSourceAccount.subtract(sum));
+                accountRepo.save(accountSource);
+                accountTarget.setBalance(accountTarget.getBalance().add(sum));
+                accountRepo.save(accountTarget);
+            }else {
+                throw new IllegalArgumentException("There are not enough funds in your account");
+            }
+
+        } else {
+            throw new IllegalArgumentException("Pin is not correct");
+        }
 
     }
 
     @Override
     public BigDecimal getBalanceByAccountNumber(Long accountNumber, String pinCode) {
-        return null;
+        Account account = getAccount(accountNumber);
+        String accountPinCode = account.getPinCode();
+        BigDecimal balance = BigDecimal.valueOf(0);
+        if (pinVerification(pinCode, accountPinCode)) {
+            balance = account.getBalance();
+        } else {
+            throw new IllegalArgumentException("Pin is not correct");
+        }
+        return balance;
     }
 
     @Override
-    public void deleteAccountById(Long accountNumber) {
-
+    public void deleteAccountByAccountNumber(Long accountNumber, String pinCode) {
+        Account account = getAccount(accountNumber);
+        String accountPinCode = account.getPinCode();
+        if (pinVerification(pinCode, accountPinCode)) {
+         accountRepo.delete(account);
+        } else {
+            throw new IllegalArgumentException("Pin is not correct");
+        }
     }
 
     @Override

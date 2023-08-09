@@ -24,7 +24,7 @@ INSERT INTO BENEFICIARIES (name, surname) VALUES
 
 INSERT INTO ACCOUNTS (account_number, pin_code, balance, beneficiary_id)
 VALUES (1234567891, '1234', 15000, 2),
-       (1234567891, '1011', 2701, 3),
+       (1234567800, '1011', 2701, 3),
        (1234567892, '2012', 2702, 3),
        (1234567893, '3013', 2703, 3),
        (1234567894, '4014', 2704, 3),
