@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -134,6 +133,7 @@ public class AccountServiceImp implements AccountService {
     }
 
     @Override
+    @Transactional
     public BigDecimal getBalanceByAccountNumber(Long accountNumber, String pinCode) {
         Account account = getAccount(accountNumber);
         String accountPinCode = account.getPinCode();
@@ -147,6 +147,7 @@ public class AccountServiceImp implements AccountService {
     }
 
     @Override
+    @Transactional
     public void deleteAccountByAccountNumber(Long accountNumber, String pinCode) {
         Account account = getAccount(accountNumber);
         String accountPinCode = account.getPinCode();

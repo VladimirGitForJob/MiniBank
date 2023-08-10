@@ -12,11 +12,9 @@ import java.util.List;
 public interface BeneficiaryRepo extends JpaRepository<Beneficiary, Long> {
 
     Beneficiary getBeneficiaryById(Long id);
-//
-//    SELECT b.name, SUM(a.BALANCE) as BALANCE from BENEFICIARIES b join ACCOUNTS a on b.ID = a.BENEFICIARY_ID GROUP BY a.BENEFICIARY_ID
-//
-//    @Query(value = "SELECT new com.example.minibank.entity.dto.BeneficiaryDTO (SELECT b.name as name, SUM(a.BALANCE) as balance from BENEFICIARIES b join ACCOUNTS a " +
-//            "on b.ID = a.BENEFICIARY_ID GROUP BY a.BENEFICIARY_ID)",nativeQuery = true)
-    @Query(value = "select new com.example.minibank.entity.dto.BeneficiaryDTO (b.name, SUM(a.balance) from Account a join Beneficiary b group by a.beneficiary)")
+    @Query("select new com.example.minibank.entity.dto.BeneficiaryDTO (b.name, SUM(a.balance)) " +
+            "FROM Beneficiary b JOIN b.accountList a " +
+            "GROUP BY b.id")
     List<BeneficiaryDTO> getBeneficiaryNameAndBalance();
+
 }

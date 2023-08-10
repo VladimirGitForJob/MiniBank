@@ -24,6 +24,7 @@ class AccountServiceImpTest {
     private AccountServiceImp accountServiceImp;
 
     Account account;
+    Account accountTo;
     Beneficiary beneficiary;
 
 
@@ -45,6 +46,15 @@ class AccountServiceImpTest {
                 .beneficiary(beneficiary)
                 .pinCode("1234")
                 .build();
+
+        accountTo = Account.builder()
+                .id(2L)
+                .accountNumber(1234561000L)
+                .balance(BigDecimal.valueOf(1000))
+                .beneficiary(beneficiary)
+                .pinCode("4321")
+                .build();
+
     }
 
     @Test
@@ -57,9 +67,23 @@ class AccountServiceImpTest {
 
     @Test
     void withdrawMoney() {
+        Mockito.when(accountRepo.getAccountByAccountNumber(1234567890L)).thenReturn(Optional.of(account));
+        accountServiceImp.withdrawMoney(1234567890L, "1234", BigDecimal.valueOf(500));
+        BigDecimal result =  account.getBalance();
+        assertEquals( BigDecimal.valueOf(500), result);
     }
 
     @Test
     void transferMoneyToOtherAccount() {
+        Mockito.when(accountRepo.getAccountByAccountNumber(1234567890L)).thenReturn(Optional.of(account));
+        Mockito.when(accountRepo.getAccountByAccountNumber(1234561000L)).thenReturn(Optional.of(accountTo));
+        accountServiceImp.transferMoneyToOtherAccount(1234567890L
+                ,1234561000L,"1234", BigDecimal.valueOf(500));
+        BigDecimal result1 =  account.getBalance();
+        assertEquals( BigDecimal.valueOf(500), result1);
+        BigDecimal result2 =  accountTo.getBalance();
+        assertEquals( BigDecimal.valueOf(1500), result2);
+
+
     }
 }
